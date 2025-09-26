@@ -8,42 +8,95 @@
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
           integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
     <link rel="stylesheet" href="assets/css/index.css">
 
 </head>
 <body>
-    <header class="header">
-        <div class="logo">Gastos Pessoais</div>
-        <nav class="nav">
-        </nav>
-        <div class="menu-toogle">&#9776;</div>
-    </header>
-    <main class="container-fluid m-2">
-        <div class="row">
-            <div class="col-md-12 align-content-end m-md-4">
-                <div>
-                    <button class="btn btn-secondary" id="btn_cadastrar">
-                        Cadastrar novo gasto
-                    </button>
-                </div>
+<header class="header">
+    <div class="logo">Gastos Pessoais</div>
+    <nav class="nav">
+    </nav>
+    <div class="menu-toogle">&#9776;</div>
+</header>
+<main class="container-fluid m-2">
+    <!--Graficos-->
+    <div class="row">
+        <div id="chartDiv" style="max-width: 600px;height: 370px;margin: 0 auto"></div>
+    </div>
+    <div class="row">
+        <div class="col-md-12 align-content-end m-md-4">
+            <div>
+                <button class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#formGastoNovo">
+                    Cadastrar novo gasto
+                </button>
             </div>
         </div>
-        <!--Graficos-->
-        <div class="row">
+    </div>
+    <!--Tabela de relatorio-->
+    <div class="row">
+        <div class="col-md-12">
+            <div id="table-container"></div>
+            <div id="pagination-container"></div>
         </div>
-        <!--Tabela de relatorio-->
-        <div class="row">
-            <div class="col-md-12">
-                <div id="table-container"></div>
-            </div>
-        </div>
+    </div>
 
-    </main>
+    <!--Modal de cadastro-->
+    <div class="modal fade" id="formGastoNovo" tabindex="-1" aria-labelledby="cadastroModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form id="formCadastro">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="cadastroModalLabel">Cadastro</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label for="name" class="form-label">Nome</label>
+                            <input type="text" min="10" class="form-control" id="name" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="date" class="form-label">Data</label>
+                            <input type="date" class="form-control" id="date" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="value" class="form-label">Valor (R$)</label>
+                            <input type="number" min="0.00" max="10000.00" step="0.01" inputmode="numeric" pattern="\d+" class="form-control" id="value" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="categoria" class="form-label">Categoria</label>
+                            <select class="form-select" id="categoria" required>
+                                <option value="">Selecione...</option>
+                                <!-- opções serão inseridas aqui -->
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <div class="form-floating">
+                                <textarea class="form-control" placeholder="Leave a comment here" id="describe"></textarea>
+                                <label for="describe" class="form-label">Descrição Breve</label>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-success">Salvar</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+</main>
 
 <script src="assets/js/index.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
         crossorigin="anonymous"></script>
+<script src="https://code.jscharting.com/latest/jscharting.js"></script>
+<script type="text/javascript" src="https://code.jscharting.com/latest/modules/types.js"></script>
+<script type="text/javascript" src="https://code.jscharting.com/latest/modules/toolbar.js"></script>
 </body>
 
 
