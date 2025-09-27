@@ -1,18 +1,67 @@
 const URL_API = 'http://localhost:5000/';
+const ERROR_CONSULTAR_API_URL = 'Ocorreu um erro ao consultar dados via API :/';
+const ERROR_INCLUIR_NOVO_GASTO = 'Infelizmente não possivel incluir um novo gasto :/';
+const ERROR_CONSULTAR_CATEGORIAS = 'Infelizmente, ocorreu um durante o processamento das categorias :/'
 const itensPerPage = 5;
 let paginaAtual = 1;
 let listaCompletaDeGastos = [];
+const showLoading = () => {
+    document.getElementById('loading-spinner').style.display = 'block';
+    document.getElementById('loading-overlay').style.display = 'block';
+};
+const hideLoading = () => {
+    document.getElementById('loading-spinner').style.display = 'none';
+    document.getElementById('loading-overlay').style.display = 'none';
+}
+const showAlerts = (message, type = "success", timeout = 5000) => {
+    const alertContainer = document.querySelector('#alert-container');
+    const icons = {
+        success: 'bi-check-circle-fill',
+        danger: 'bi-exclamation-triangle-fill',
+        warning: 'bi-exclamation-circle-fill',
+        info: 'bi-info-circle-fill'
+    }
+    const icon = icons[type] || 'bi-info-circle-fill';
+    const alert = document.createElement("div");
+    alert.className = `alert alert-${type} alert-dismissible fade show`;
+    alert.role = 'alert';
+    alert.innerHTML = `
+        <i class="bi ${icon} me-2"></i>
+        ${message}
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close"></button>
+    `;
+    alertContainer.appendChild(alert);
+    setTimeout(() => {
+        alert.classList.remove('show');
+        alert.classList.add('hide');
+        setTimeout(() => alert.remove(), 500);
+    }, timeout);
+}
+const tratarErrosApi = (message, err) => {
+    console.error(`Error: ${err}`);
+    showAlerts(message, 'danger');
+}
 const carregarListaGastos = async () => {
+    showLoading();
     return fetch(URL_API + '/gastos', {method: 'GET'})
         .then(res => res.json())
         .then(data => {
+            showAlerts('Carregamento efetuado com sucesso');
             if (data.gastos && data.gastos.length > 0) {
                 listaCompletaDeGastos = data.gastos;
                 renderizarTabela(paginaAtual);
                 construirControlesPagination();
             }
         })
-        .catch(err => console.log(err));
+        .catch(err => {
+                tratarErrosApi(
+                    `${ERROR_CONSULTAR_API_URL} + \n Não foi possivel carregar os gastos do mês`,
+                    err
+                );
+                window.location.href = 'pages/critical-error.html'
+            }
+        )
+        .finally(() => hideLoading());
 }
 const formatarData = (data) => {
     const dia = String(data.getDate()).padStart(2, '0');
@@ -21,6 +70,7 @@ const formatarData = (data) => {
     return `${dia}/${mes}/${ano}`;
 }
 const carregarRelatorioGastosPerCategoria = async () => {
+    showLoading();
     const hoje = new Date();
     const ano = hoje.getFullYear();
     const mes = hoje.getMonth();
@@ -36,24 +86,31 @@ const carregarRelatorioGastosPerCategoria = async () => {
                 construirGraficoGastosPerCategoria(data);
             }
         })
-        .catch(err => console.log(err));
+        .catch(err => tratarErrosApi(
+                `${ERROR_CONSULTAR_API_URL} + \n 
+                        Não foi possivel consultar o resumo de gastos por categoria`,
+                err
+            )
+        )
+        .finally(() => hideLoading());
 }
 const carregarCategoriasViaApi = async () => {
-      const url = URL_API + '/categorias';
-      return fetch(url, {method: 'GET'})
-          .then(res => res.json())
-          .then(data => {
-              const select = document.getElementById('categoria');
-              select.innerHTML = '<option value="">Selecione uma categoria...</option>';
-              if (data.categorias && data.categorias.length > 0) {
-                  data.categorias.forEach(element => {
-                      const option = document.createElement('option');
-                      option.value = element.id;
-                      option.textContent = element.name;
-                      select.appendChild(option);
-                  });
-              }
-          })
+    const url = URL_API + '/categorias';
+    return fetch(url, {method: 'GET'})
+        .then(res => res.json())
+        .then(data => {
+            const select = document.getElementById('categoria');
+            select.innerHTML = '<option value="">Selecione uma categoria...</option>';
+            if (data.categorias && data.categorias.length > 0) {
+                data.categorias.forEach(element => {
+                    const option = document.createElement('option');
+                    option.value = element.id;
+                    option.textContent = element.name;
+                    select.appendChild(option);
+                });
+            }
+        })
+        .catch(err => tratarErrosApi(`${ERROR_CONSULTAR_CATEGORIAS}`, err));
 }
 
 const addNewGasto = async (data) => {
@@ -68,9 +125,11 @@ const addNewGasto = async (data) => {
         })
         .then(data => {
             const modal = bootstrap.Modal.getInstance(document.querySelector('#formGastoNovo'));
-            modal.hide();
             document.querySelector('#formCadastro').reset();
+            modal.hide();
+            showAlerts('O Gasto foi adicionado com sucesso!', 'success');
         })
+        .catch(err => tratarErrosApi(`${ERROR_INCLUIR_NOVO_GASTO}`, err));
 }
 
 const format = (valor) => {
@@ -182,9 +241,9 @@ const construirControlesPagination = () => {
         botao.classList.add('btn', 'btn-sm', 'btn-outline-primary');
         if (i === paginaAtual) botao.classList.add('active');
         botao.addEventListener('click', () => {
-           paginaAtual = i;
-           renderizarTabela(paginaAtual);
-           construirControlesPagination();
+            paginaAtual = i;
+            renderizarTabela(paginaAtual);
+            construirControlesPagination();
         });
         divPaginacao.appendChild(botao);
     }

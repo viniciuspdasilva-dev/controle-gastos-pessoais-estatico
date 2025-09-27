@@ -13,6 +13,7 @@ header {
     padding: 1rem 2rem;
     position: relative;
 }
+
 header > .logo {
     font-size: 2rem;
     font-weight: bold;
@@ -41,6 +42,31 @@ header > .nav > ul > li > a:hover {
     cursor: pointer;
 }
 
+#alert-container {
+    z-index: 2000;
+}
+
+#loading-spinner {
+    z-index: 1051;
+    display: none;
+}
+
+#loading-overlay {
+    z-index: 1050;
+    display: none;
+}
+.spin {
+    animation: spin 2s linear infinite;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
 @media (max-width: 768px) {
     .nav ul {
         flex-direction: column;

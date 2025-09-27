@@ -1,0 +1,39 @@
+body {
+    background-color: #1a1a1a;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    margin: 0;
+    font-family: 'Segoe UI', sans-serif;
+}
+
+.error-box {
+    text-align: center;
+    max-width: 500px;
+    padding: 2rem;
+    border-radius: 10px;
+    background-color: #2c2c2c;
+    box-shadow: 0 0 20px rgba(255, 0, 0, 0.3);
+}
+
+.error-box i {
+    font-size: 4rem;
+    color: #dc3545;
+    margin-bottom: 1rem;
+}
+
+.error-box h1 {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+}
+
+.error-box p {
+    font-size: 1.1rem;
+    margin-bottom: 2rem;
+}
+
+.error-box a {
+    text-decoration: none;
+}
