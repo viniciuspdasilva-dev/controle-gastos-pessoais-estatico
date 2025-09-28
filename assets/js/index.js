@@ -167,7 +167,7 @@ const construirGraficoGastosPerCategoria = (data) => {
                 events_change: setAutoHide
             }
         },
-        title_label_text: 'Categoria x Gastos',
+        title_label_text: 'Categoria x Despesas',
         yAxis: {label_text: 'Categoria', formatString: 'n'},
         series: [{
             name: 'Categoria',
